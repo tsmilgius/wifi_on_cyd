@@ -1,0 +1,15 @@
+# Custom partition table with larger app space
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_PARTITION_TABLE_FILENAME="partitions.csv"
+
+# Flash size 4MB (standard for CYD boards)
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="4MB"
+
+# Increase main task stack size for LVGL buffers
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+
+# LVGL thread safety
+CONFIG_LV_USE_OS=y
+CONFIG_LV_USE_PTHREAD=y

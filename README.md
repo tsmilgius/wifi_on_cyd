@@ -1,8 +1,9 @@
-# CYD (Cheap Yellow Display) + LVGL + Touch (ESP32)
+# CYD (Cheap Yellow Display) + LVGL + Touch + WiFi Scanner (ESP32)
 
 This project is a working template for the 2.8" Cheap Yellow Display (CYD) with an
 ILI9341 LCD and XPT2046 touch controller. It brings up LVGL, maps touch to the
-screen, and applies the color fixes needed for correct colors.
+screen, applies the color fixes needed for correct colors, and includes a WiFi
+scanner that displays available networks.
 
 ## What this project provides
 
@@ -10,7 +11,9 @@ screen, and applies the color fixes needed for correct colors.
 - Touch input wired to LVGL pointer
 - Touch raw calibration mapping to full screen
 - Color correction (byte swap + RGB/BGR) for proper colors
-- Simple UI with touch label + cursor (kept on purpose)
+- WiFi scanner that refreshes every 2 seconds
+- Network list sorted by signal strength
+- Display of SSID, signal strength (dBm), and security type
 
 ## Hardware
 
@@ -79,14 +82,18 @@ If colors are wrong, flip these in `main/cyd_config.h`:
 
 ```
 main/
-  main.c          LVGL init, touch mapping, and app_menu()
-  cyd_hw.c/h      Backlight + LCD + touch init
-  cyd_config.h    Pins, calibration, and color settings
-  ui.c/h          Basic UI setup (background, labels, cursor)
+  main.c            LVGL init, touch mapping, and app_main()
+  cyd_hw.c/h        Backlight + LCD + touch init
+  cyd_config.h      Pins, calibration, and color settings
+  ui.c/h            Basic UI setup (background, labels, cursor)
+  wifi_scanner.c/h  WiFi scanning module with auto-refresh UI
 ```
 
 ## Notes
 
+- WiFi scanner runs in a separate FreeRTOS task.
+- Networks are sorted by signal strength (strongest first).
+- The list refreshes automatically every 2 seconds.
 - Touch label and cursor are intentionally kept for quick debugging.
 - This repo is intended as a reusable CYD starter template.
 

@@ -15,6 +15,7 @@
 #include "cyd_config.h"
 #include "cyd_hw.h"
 #include "ui.h"
+#include "wifi_scanner.h"
 
 static const char *TAG = "cyd_lvgl";
 
@@ -110,6 +111,30 @@ static void lvgl_touch_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
     }
 }
 
+/* Callback for green button press - starts WiFi scanner */
+static void on_green_button_pressed(void)
+{
+    static bool wifi_initialized = false;
+    
+    /* Initialize WiFi only once */
+    if (!wifi_initialized) {
+        ESP_LOGI(TAG, "Green button pressed - initializing WiFi");
+        esp_err_t ret = wifi_scanner_init();
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to initialize WiFi scanner");
+            return;
+        }
+        wifi_initialized = true;
+    }
+    
+    /* Always try to start/show the scanner */
+    ESP_LOGI(TAG, "Showing WiFi scanner");
+    esp_err_t ret = wifi_scanner_start(ui_get_main_screen());
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to start WiFi scanner");
+    }
+}
+
 void app_main(void)
 {
     esp_err_t ret;
@@ -196,6 +221,10 @@ void app_main(void)
     ESP_LOGI(TAG, "LVGL running");
 
     /* Main LVGL task loop */
+    /* Set green button callback */
+    ESP_LOGI(TAG, "Setting up green button callback");
+    ui_set_green_button_callback(on_green_button_pressed);
+
     while (1) {
         lv_timer_handler();
         vTaskDelay(pdMS_TO_TICKS(LVGL_TASK_DELAY_MS));
